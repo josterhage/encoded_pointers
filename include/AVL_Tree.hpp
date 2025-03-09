@@ -29,7 +29,7 @@ class AVL_TreeNode;
  * @brief Bit-mask for extracting the balance factor from an encoded
  * @c AVL_TreeNodePointer .
  */
-static constexpr uintptr_t bf_mask = 3;
+static constexpr uintptr_t bf_mask = 7;
 /**
  * @brief Bit-mask for removing the balance factor or, by extension,
  * extracting the pointer value from a @c AVL_TreeNodePointer .
@@ -71,17 +71,17 @@ public:
 	 * @brief Default constructor.
 	 * @post object == nullptr && object.bf() == 0
 	 */
-	constexpr AVL_TreeNodePointer() noexcept : m_pointer(1) { }
+	constexpr AVL_TreeNodePointer() noexcept : m_pointer(2) { }
 
 	/**
-	 * @brief Value-based constructor.
+	 * @brief State-setting constructor.
 	 * @param node_p Pointer to an AVL_TreeNode<Key,Value> that this object
 	 * will manage.
 	 * @param balance_factor Initial balance factor of the node. Default value is 0
 	 * @post object == node_p && object.bf() == balance_factor
 	 */
 	AVL_TreeNodePointer(AVL_TreeNode<Key, Value>* node_p, balance_factor_t balance_factor = 0)
-		: m_pointer(pointer_to_int(node_p) | (balance_factor + 1))
+		: m_pointer(pointer_to_int(node_p) | (balance_factor + 2))
 	{ }
 
 	operator AVL_TreeNode<Key, Value>* ()
@@ -108,13 +108,13 @@ public:
 
 	balance_factor_t bf()
 	{
-		return (m_pointer & bf_mask) - 1;
+		return (m_pointer & bf_mask) - 2;
 	}
 
 	void bf(const balance_factor_t& bf)
 	{
 		m_pointer &= bf_delete_mask;
-		m_pointer |= ((bf + 1) & bf_mask);
+		m_pointer |= ((bf + 2) & bf_mask);
 	}
 private:
 	uintptr_t m_pointer;
